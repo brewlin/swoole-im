@@ -1,0 +1,42 @@
+{include file="public/header" /}
+    <!-- <link href="__STATIC__/css/plugins/iCheck/custom.css" rel="stylesheet"> -->
+    <!-- <script>if(window.top !== window.self){ window.top.location = window.location;}</script> -->
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen   animated fadeInDown">
+        <div>
+            <div>
+
+                <h1 class="logo-name">yyj</h1>
+
+            </div>
+            <h3>注册预言家后台管理系统</h3>
+
+            <form id="x-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="repassword" id="repassword" placeholder="请再次输入密码" required="">
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b" onclick="register();return false;">注 册</button>
+
+                <p class="text-muted text-center"><small>已经有账户了？</small><a href="{:url('Login/index')}">点此登录</a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+    {include file="public/footer" /}
+
+    
+    
+
+</body>
+
+</html>

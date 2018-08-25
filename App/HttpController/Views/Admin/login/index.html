@@ -1,0 +1,34 @@
+{include file="public/header" /}
+    <link href="__STATIC__/css/login.css" rel="stylesheet">
+    <script>
+        if (window.top !== window.self) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</head>
+
+<body class="signin">
+    <div class="signinpanel">
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="x-form">
+                    <h4 class="no-margins">登录：</h4>
+                    <p class="m-t-md">登录到预言家CMS后台</p>
+                    <input type="text" class="form-control uname" name="username" id="username" placeholder="用户名" />
+                    <input type="password" class="form-control pword m-b" name="password" id="password" placeholder="密码" />
+                    <a href="{:url('Register/index')}">没有账号？</a>
+                    <button class="btn btn-success btn-block" onclick="login();return false;">登录</button>
+                </form>
+            </div>
+        </div>
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy; 预言家
+            </div>
+        </div>
+    </div>
+    {include file="public/footer" /}
+</body>
+
+</html>

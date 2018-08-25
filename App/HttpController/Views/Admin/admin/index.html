@@ -1,0 +1,137 @@
+{include file="public/header" /}
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>管理员列表</h5>
+<!--                         <div class="ibox-tools">
+                            <a href="projects.html" class="btn btn-primary btn-xs">创建新项目</a>
+                        </div> -->
+                    </div>
+                    <div class="ibox-content">
+                        <form action="index" method="GET">
+                            <div class="row">
+    <!--                             <div class="col-sm-5 m-b-xs">
+                                    <select class="input-sm form-control input-s-sm inline">
+                                        <option value="0">请选择</option>
+                                        <option value="1">选项1</option>
+                                        <option value="2">选项2</option>
+                                        <option value="3">选项3</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 m-b-xs">
+                                    <div data-toggle="buttons" class="btn-group">
+                                        <label class="btn btn-sm btn-white">
+                                            <input id="option1" name="options" type="radio">天</label>
+                                        <label class="btn btn-sm btn-white active">
+                                            <input id="option2" name="options" type="radio">周</label>
+                                        <label class="btn btn-sm btn-white">
+                                            <input id="option3" name="options" type="radio">月</label>
+                                    </di -->
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="input-group">
+                                        <input name="keywords" placeholder="{$key}" class="input-sm form-control" type="text"> <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button> </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="project-list">
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>ID</th>
+                                    <th>登录账号</th>
+                                    <th>昵称</th>
+                                    <th>邮箱</th>
+                                    <th>所属用户组</th>
+                                    <th>注册时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </thead>
+                                <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <td>{$vo.id}</td>
+                                        <td>{$vo.username}</td>
+                                        <td>{$vo.nickname}</td>
+                                        <td>{$vo.email}</td>
+                                        <td>{$vo.role_id}</td>
+                                        <td>{$vo.create_time}</td>
+                                        {if condition="$vo.status ==1"}
+                                        <td class="project-status">
+                                            <span class="label label-primary" x-id="{$vo.id}" x-status="0" onclick="updateStatus(this);" style="cursor: pointer">启用</span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/admin/edit?id={$vo.id}" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> 编辑 </a>
+                                            <button class="btn btn-primary " x-id="{$vo.id}" onclick="delData(this);"  type="button"><i class="fa fa-close"></i>&nbsp;删除
+                                            </button>
+                                        </td>
+                                        {else}
+                                        <td colspan="2" align="center">
+                                            <span class="badge badge-danger">禁用</span>
+                                        </td>
+                                        {/if}
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- 全局js -->
+
+    {include file="public/footer" /}
+    <!-- 自定义js -->
+    <script src="/admin/js/content.js?v=1.0.0"></script>
+
+
+    <script>
+        $(document).ready(function(){
+
+            $('#loading-example-btn').click(function () {
+                btn = $(this);
+                simpleLoad(btn, true)
+
+                // Ajax example
+//                $.ajax().always(function () {
+//                    simpleLoad($(this), false)
+//                });
+
+                simpleLoad(btn, false)
+            });
+        });
+
+        function simpleLoad(btn, state) {
+            if (state) 
+            {
+                btn.children().addClass('fa-spin');
+                btn.contents().last().replaceWith(" Loading");
+            } else 
+            {
+                setTimeout(function () {
+                    btn.children().removeClass('fa-spin');
+                    btn.contents().last().replaceWith(" Refresh");
+                }, 2000);
+            }
+        }
+    </script>
+
+    
+
+    </body>
+</html>

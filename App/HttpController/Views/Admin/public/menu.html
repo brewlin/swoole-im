@@ -1,0 +1,73 @@
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs" style="font-size:20px;">
+                                        <i class="glyphicon glyphicon-leaf"></i>
+                                        <strong class="font-bold"> WEBSOCKET</strong>
+                                    </span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">WEBSOCKET
+                        </div>
+                    </li>
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">控制台</span>
+                    </li>
+
+                    <li>
+                        <a class="J_menuItem" href="admin/index/main">
+                            <i class="fa fa-home"></i>
+                            <span class="nav-label">主页</span>
+                        </a>
+                    </li>
+
+<!-- 菜单栏 -->
+<!-- 一级菜单 -->
+                    {volist name="menu" id="vo"}
+                            <li class="line dk"></li>
+                            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                                <span class="ng-scope">{$vo.title}</span>
+                            </li>
+<!-- 二级菜单 -->
+                                {volist name="vo.list" id="slist"}
+                                    <li>
+                                        <a class="J_menuItem" {empty name="slist.list"}href="{$slist.href}"{/empty}>
+                                         <!-- <span class="{$slist.icon}"></span> -->
+                                         <i class="{$slist.icon}"></i>
+                                         <span class="nav-label">{$slist.title}</span>
+                                         {notempty name="slist.list"}
+                                          <span class="fa arrow"></span>
+                                         {/notempty}
+                                        </a>
+                                        {notempty name="slist.list"}
+<!-- 三级菜单 -->
+                                        <ul class="nav nav-second-level">
+                                            {volist name="slist.list" id="tlist"}
+                                            <li>
+                                                <a class="J_menuItem" href="{$tlist.href}">{$tlist.name}</a>
+                                            </li>
+                                            {/volist}
+                                        </ul>
+                                        {/notempty}
+                                    </li>
+                                {/volist}
+
+
+                    {/volist}
+
+
+
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->

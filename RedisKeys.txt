@@ -1,0 +1,9 @@
+user:token:$token:data             根据 token 获取 user 信息         hash
+userOtherInfo:number:$number:data   根据 number 获取 token/fd 信息    hash
+
+user:getUser:fd:$fd     根据 fd 获取 user
+
+allUser:fd              所有在线 fd     （集合）
+
+group:$gnumber:fd        获取所有小组内在线成员     （集合）
+

@@ -1,0 +1,102 @@
+{include file="public/header" /}
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>管理员列表</h5>
+<!--                         <div class="ibox-tools">
+                            <a href="projects.html" class="btn btn-primary btn-xs">创建新项目</a>
+                        </div> -->
+                    </div>
+                    <div class="ibox-content">
+
+
+                        <div class="project-list">
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>ID</th>
+                                    <th>登录账号</th>
+                                    <th>昵称</th>
+                                    <th>邮箱</th>
+                                    <th>注册时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </thead>
+                                <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <td>{$vo.id}</td>
+                                        <td>{$vo.username}</td>
+                                        <td>{$vo.nickname}</td>
+                                        <td>{$vo.email}</td>
+                                        <td>{$vo.create_time}</td>
+                                        <td class="project-status">
+                                            <span class="label label-primary">审核中</span>
+                                        </td>
+                                        <td>
+
+                                            <button  x-id="{$vo.id}" x-status="1" onclick="updateStatus(this);" class="btn btn-primary " type="button"><i class="fa fa-check">
+                                                
+                                            </i>&nbsp;通过
+                                            </button>                                                
+                                       </td>
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- 全局js -->
+    {include file="public/footer" /}
+    <!-- 自定义js -->
+    <script src="__STATIC__/js/content.js?v=1.0.0"></script>
+
+
+    <script>
+        $(document).ready(function(){
+
+            $('#loading-example-btn').click(function () {
+                btn = $(this);
+                simpleLoad(btn, true)
+
+                // Ajax example
+//                $.ajax().always(function () {
+//                    simpleLoad($(this), false)
+//                });
+
+                simpleLoad(btn, false)
+            });
+        });
+
+        function simpleLoad(btn, state) {
+            if (state) 
+            {
+                btn.children().addClass('fa-spin');
+                btn.contents().last().replaceWith(" Loading");
+            } else 
+            {
+                setTimeout(function () {
+                    btn.children().removeClass('fa-spin');
+                    btn.contents().last().replaceWith(" Refresh");
+                }, 2000);
+            }
+        }
+    </script>
+
+    
+
+    </body>
+</html>
