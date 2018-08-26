@@ -106,14 +106,14 @@ class Login extends Controller
         }
 
         // 查看用户是否已登录
-        UserCacheService::delNumberUserOtherInfo($user['number']);
-        $isLogin = UserCacheService::getTokenByNum($user['number']);
-        if($isLogin){
-            throw new LoginException([
-                'msg'=>'用户已登录',
-                'errorCode'=>30003
-            ]);
-        }
+//        UserCacheService::delNumberUserOtherInfo($user['number']);
+//        $isLogin = UserCacheService::getTokenByNum($user['number']);
+//        if($isLogin){
+//            throw new LoginException([
+//                'msg'=>'用户已登录',
+//                'errorCode'=>30003
+//            ]);
+//        }
 
         // 比较密码是否一致
         if (strcmp(md5($password),$user['password'])){

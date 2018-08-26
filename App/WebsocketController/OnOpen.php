@@ -38,6 +38,13 @@ class OnOpen extends BaseWs
             $this->response()->write(json_encode($err));
             return;
         }
+        //判断是否有其他地方已登陆
+        $userFd = UserCacheService::getFdByNum($user['user']['number']);
+        if($userFd != (int)$user['fd'])
+        {
+            $server = ServerManager::getInstance()->getServer();
+            $server->push($userFd , json_encode(['type'=>'ws','method'=> 'belogin','data'=> 'logout']));
+        }
         //初始化所有相关缓存
         $this->saveCache($user);
 

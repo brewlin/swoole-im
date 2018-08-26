@@ -15,6 +15,7 @@ use App\Exception\Websocket\WsException;
 use App\Model\User as UserModel;
 use App\Service\UserCacheService;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
+use EasySwoole\Core\Swoole\ServerManager;
 
 class BaseWs extends WebSocketController
 {
