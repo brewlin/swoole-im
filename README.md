@@ -9,7 +9,7 @@ SWOOLE_IM 基于websocket实时通讯平台
 + 本项目前端使用layim 搭建，借鉴了菜单插件contextmenu
 + 请使用swoole扩展2.1.3+ 以及php 7.1+
 + 项目地址 http://im.huido.site 
-+ 测试账号 test@qq.com/test
++ 测试账号 test@qq.com/xiaodo
 
 
 2.架构图
