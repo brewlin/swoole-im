@@ -23,6 +23,7 @@ use App\Validate\RegisterValidate;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use EasySwoole\Core\Swoole\Task\TaskManager;
+use EasySwoole\Core\Swoole\ServerManager;
 use App\Model\GroupUser;
 
 class Login extends Controller
@@ -114,6 +115,12 @@ class Login extends Controller
 //                'errorCode'=>30003
 //            ]);
 //        }
+        $userFd = UserCacheService::getFdByNum($user['number']);
+        if($userFd)
+        {
+            $server = ServerManager::getInstance()->getServer();
+            $server->push($userFd , json_encode(['type'=>'ws','method'=> 'belogin','data'=> 'logout']));
+        }
 
         // 比较密码是否一致
         if (strcmp(md5($password),$user['password'])){
