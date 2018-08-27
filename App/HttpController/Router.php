@@ -35,6 +35,8 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
            $r->addRoute('POST','/friend/remove','/Api/GroupUserMember/removeFriend');//删除好友
             //获取推荐好友
             $r->addRoute('GET','/friend/recommend','/Api/GroupUserMember/getRecommendFriend');
+            //退出
+            $r->addRoute('GET','/user/quit','/Api/User/userQuit');
         });
         /**
          * 群组路由

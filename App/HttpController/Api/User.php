@@ -11,6 +11,10 @@ use App\Model\Group;
 use App\Service\UserCacheService;
 use App\Validate\User as UserValidate;
 use App\Model\User as UserModel;
+use App\Model\Friend as FriendModel;
+use App\Model\GroupMember;
+use App\Service\FriendService;
+use EasySwoole\Core\Swoole\ServerManager;
 class User extends Base
 {
     /**
@@ -35,5 +39,67 @@ class User extends Base
         }
         return $this->success($info);
 
+    }
+    /**
+     * 用户退出删除用户相关资源
+     */
+    public function userQuit()
+    {
+        $token = $this->request()->getRequestParam("token");
+        $user   = UserCacheService::getUserByToken($token);
+        $info = [
+            'user' => $user,
+            'token' => $token,
+        ];
+        if($info)
+        {
+            if($info){
+                // 销毁相关缓存
+            $this->delCache($info);
+
+                // 给好友发送离线提醒
+            $this->offLine($info);
+            }
+        }
+    }
+    /*
+    * 销毁个人/群组缓存
+    */
+    private function delCache($info){
+        $fd = UserCacheService::getFdByNum($info['user']['number']);
+        UserCacheService::delTokenUser($info['token']);
+        UserCacheService::delNumberUserOtherInfo($info['user']['number']);
+        UserCacheService::delFdToken($fd);
+        UserCacheService::delFds($fd);
+        $groups = GroupMember::getGroups(['user_number'=>$info['user']['number']]);
+        if(!$groups->isEmpty()){
+            foreach ($groups as $val){
+                UserCacheService::delGroupFd($val->gnumber, $fd);
+            }
+        }
+    }
+
+    /*
+     * 给在线好友发送离线提醒
+     */
+    private function offLine($user){
+        $friends = FriendModel::getAllFriends($user['user']['id']);
+        $friends = FriendService::getFriends($friends);
+        $server = ServerManager::getInstance()->getServer();
+
+        $data = [
+            'type'      => 'ws',
+            'method'    => 'friendOffLine',
+            'data'      => [
+                'number'    => $user['user']['number'],
+                'nickname'  => $user['user']['nickname'],
+            ]
+        ];
+        foreach ($friends as $val){
+            if($val['online']){
+                $fd = UserCacheService::getFdByNum($val['number']);
+                $server->push($fd,json_encode($data));
+            }
+        }
     }
 }
