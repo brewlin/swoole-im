@@ -20,8 +20,8 @@ return [
             'worker_num'=>2,
             'document_root' => '/website/swoole-im/Public',  // 静态资源目录
             'enable_static_handler' => true,
-            'heartbeat_idle_time' => 60,
-            'heartbeat_check_interval' => 20,
+//            'heartbeat_idle_time' => 60,
+//            'heartbeat_check_interval' => 20,
         ],
     ],
     'DEBUG'=>true,

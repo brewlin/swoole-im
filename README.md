@@ -7,7 +7,13 @@ SWOOLE_IM 基于websocket实时通讯平台
 + 独立websocket中心服务处理数据
 + 异步任务机制、异步redis池
 + 本项目前端使用layim 搭建，借鉴了菜单插件contextmenu
-+ 请使用swoole扩展2.1.3+ 以及php 7.1+
++ 请使用swoole扩展2.1.3 以及php 7.1
++ 快速开始
+    - composer update
+    - 编译swoole的时候需开启异步reids client 
+        - ./configure --enable-async-redis
+    - 修改 config配置文件 端口等信息
+    - php index.php start 开启服务
 + 项目地址 http://im.huido.site 
 + 测试账号 test@qq.com/xiaodo
 

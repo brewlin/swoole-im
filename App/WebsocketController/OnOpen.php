@@ -31,7 +31,6 @@ class OnOpen extends BaseWs
     public function init()
     {
         $user = $this->getUserInfo();
-//        var_dump($user);
         if(!$user)
         {
             $err = (new TokenException())->getMsg();
