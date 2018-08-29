@@ -148,7 +148,6 @@ class UserCacheService
         $redis_pool = new RedisPoolService();
         return $redis_pool->sAdd($key, $fd);
     }
-
     public static function getFdFromSet(){
         $key = Config::getInstance()->getConf('setting.cache_name.all_fd');
         $redis_pool = new RedisPoolService();

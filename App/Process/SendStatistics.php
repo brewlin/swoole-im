@@ -9,6 +9,9 @@
 namespace App\Process;
 
 
+use App\Service\UserCacheService;
+use App\Utility\RedisPool;
+use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use EasySwoole\Core\Swoole\Process\AbstractProcess;
 use EasySwoole\Core\Swoole\ServerManager;
 use Swoole\Process;
@@ -22,7 +25,6 @@ class SendStatistics extends AbstractProcess
         Timer::loop(2000, function () {
             $serv = ServerManager::getInstance()->getServer();
             $count = count($serv->connections);
-
             $start_fd = 0;
             $serv = ServerManager::getInstance()->getServer();
             $res = [

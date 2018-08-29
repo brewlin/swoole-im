@@ -31,5 +31,12 @@ class User extends BaseValidate
         $this->rules->add('id','缺少id')->withRule(Validate::REQUIRED);
         $this->rules->add('type','缺少类型')->withRule(Validate::REQUIRED);
     }
+    /**
+     * 签名
+     */
+    public function sign()
+    {
+        $this->rules->add('sign','缺少类型')->withRule(Validate::REQUIRED);
+    }
 
 }

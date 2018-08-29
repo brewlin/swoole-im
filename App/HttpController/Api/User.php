@@ -11,11 +11,9 @@ use App\Model\Group;
 use App\Service\UserCacheService;
 use App\Validate\User as UserValidate;
 use App\Model\User as UserModel;
-use App\Model\Friend as FriendModel;
 use App\Model\GroupMember;
 use App\Model\GroupUser;
 use App\Service\GroupUserMemberService;
-use App\Service\FriendService;
 use EasySwoole\Core\Swoole\ServerManager;
 class User extends Base
 {
@@ -91,7 +89,7 @@ class User extends Base
             'type'      => 'ws',
             'method'    => 'friendOffLine',
             'data'      => [
-                'number'    => $user['user']['number'],
+                'number'    => $user['user']['id'],
                 'nickname'  => $user['user']['nickname'],
             ]
         ];
@@ -104,4 +102,17 @@ class User extends Base
             }
         }
     }
+    /**
+     * 修改用户签名
+     */
+    public function editSignature()
+    {
+        (new UserValidate('sign'))->goCheck($this->request());
+        $sign = $this->request()->getQueryParam('sign');
+        UserModel::updateUser($this->user['id'] ,['sign' => $sign]);
+        $user = UserModel::find($this->user['id']);
+        UserCacheService::saveTokenToUser($this->request()->getQueryParam('token') , $user);
+        return $this->success([],'成功');
+    }
+
 }

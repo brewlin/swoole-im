@@ -91,7 +91,7 @@ class OnOpen extends BaseWs
             'type'      => 'ws',
             'method'    => 'friendOnLine',
             'data'      => [
-                'number'    => $user['user']['number'],
+                'number'    => $user['user']['id'],
                 'nickname'  => $user['user']['nickname'],
             ]
         ];

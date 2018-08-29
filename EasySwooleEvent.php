@@ -65,7 +65,6 @@ Class EasySwooleEvent implements EventInterface
         if (version_compare(phpversion('swoole'), '2.1.0', '>=')) {
             PoolManager::getInstance()->addPool(RedisPool::class, 3, 10);
         }
-
         // 添加 onMessage 的处理方式
         EventHelper::registerDefaultOnMessage($register, "App\Sock\Parser\WebSock");
 
