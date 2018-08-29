@@ -75,7 +75,8 @@ class Login extends Controller
             'email' => $email,
             'password' => md5($password),
             'nickname' => $nickname,
-            'number' => $number
+            'number' => $number,
+            'username' => $nickname
         ];
         try{
             $uid = UserModel::newUser($data);

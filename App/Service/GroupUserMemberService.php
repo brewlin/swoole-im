@@ -51,7 +51,7 @@ class GroupUserMemberService
     }
     public static function friendInfo($where){
         $user = UserModel::where($where)->find();
-        $user['online']  = UserCacheService::getFdByNum($user['number'])?'online':'offline';   // 是否在线
+        $user['online']  = UserCacheService::getTokenByNum($user['number'])?'online':'offline';   // 是否在线
         return $user;
     }
 

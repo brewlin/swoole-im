@@ -17,6 +17,8 @@ use App\Service\UserCacheService;
 use App\Model\Friend as FriendModel;
 use EasySwoole\Core\Component\Logger;
 use EasySwoole\Core\Swoole\ServerManager;
+use App\Model\GroupUser;
+use App\Service\GroupUserMemberService;
 
 class OnOpen extends BaseWs
 {
@@ -80,8 +82,9 @@ class OnOpen extends BaseWs
      */
     private function sendOnlineMsg($user)
     {
-        $friends = FriendModel::getAllFriends($user['user']['id']);
-        $friends = FriendService::getFriends($friends);
+        // 获取分组好友
+        $groups = GroupUser::getAllFriends($user['user']['id']);
+        $friends = GroupUserMemberService::getFriends($groups);
         $server = ServerManager::getInstance()->getServer();
 
         $data = [
@@ -94,10 +97,13 @@ class OnOpen extends BaseWs
         ];
         foreach ($friends as $val)
         {
-            if($val['online'])
+            foreach ($val['list'] as $v)
             {
-                $fd = UserCacheService::getFdByNum($val['number']);
-                $server->push($fd,json_encode($data));
+                if($v['online'])
+                {
+                    $fd = UserCacheService::getFdByNum($v['number']);
+                    $server->push($fd,json_encode($data));
+                }
             }
         }
     }

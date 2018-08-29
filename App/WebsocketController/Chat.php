@@ -15,7 +15,7 @@ use App\Service\ChatService;
 use App\Service\Common;
 use App\Service\FriendService;
 use App\Model\GroupMember as GroupMemberModel;
-use App\Model\user;
+use App\Model\User;
 
 class Chat extends BaseWs
 {

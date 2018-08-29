@@ -27,8 +27,8 @@ class Tool extends Base
         $dir = Config::getInstance()->getConf('tool.upload_path')?'/upload':Config::getInstance()->getConf('tool.upload_path');
         $path = $dir."/".$type."/".date("Ymd");
 
-        if (!file_exists(EASYSWOOLE_ROOT."/Public".$path)) {
-            mkdir(EASYSWOOLE_ROOT."/Public".$path, 0777, true);
+        if (!file_exists(Config::getInstance()->getConf('tool.root_dir').$path)) {
+            mkdir(Config::getInstance()->getConf('tool.root_dir').$path, 0777, true);
         }
         if(in_array($type , ['jpeg','jpg','png','avi','mp3']))
         {
@@ -58,7 +58,7 @@ class Tool extends Base
         $type = array_pop($type);
         $clientName = $file->getClientFilename();
         $pathName = $this->getFullPath($file,$type , $clientName);
-        $file->moveTo(EASYSWOOLE_ROOT."/Public".$pathName);
+        $file->moveTo(Config::getInstance()->getConf('tool.root_dir').$pathName);
         $this->success(['src' => $pathName]);
     }
 }

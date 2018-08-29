@@ -7,4 +7,5 @@
  */
 return [
   'upload_path' => '/upload',
+    'root_dir' => '/website/im/public'
 ];

@@ -13,6 +13,8 @@ use App\Validate\User as UserValidate;
 use App\Model\User as UserModel;
 use App\Model\Friend as FriendModel;
 use App\Model\GroupMember;
+use App\Model\GroupUser;
+use App\Service\GroupUserMemberService;
 use App\Service\FriendService;
 use EasySwoole\Core\Swoole\ServerManager;
 class User extends Base
@@ -53,13 +55,11 @@ class User extends Base
         ];
         if($info)
         {
-            if($info){
                 // 销毁相关缓存
             $this->delCache($info);
 
                 // 给好友发送离线提醒
             $this->offLine($info);
-            }
         }
     }
     /*
@@ -83,8 +83,9 @@ class User extends Base
      * 给在线好友发送离线提醒
      */
     private function offLine($user){
-        $friends = FriendModel::getAllFriends($user['user']['id']);
-        $friends = FriendService::getFriends($friends);
+        // 获取分组好友
+        $groups = GroupUser::getAllFriends($user['user']['id']);
+        $friends = GroupUserMemberService::getFriends($groups);
         $server = ServerManager::getInstance()->getServer();
 
         $data = [
@@ -95,10 +96,12 @@ class User extends Base
                 'nickname'  => $user['user']['nickname'],
             ]
         ];
-        foreach ($friends as $val){
-            if($val['online']){
-                $fd = UserCacheService::getFdByNum($val['number']);
-                $server->push($fd,json_encode($data));
+        foreach ($friends as $val) {
+            foreach ($val['list'] as $v){
+                if ($v['online']) {
+                    $fd = UserCacheService::getFdByNum($v['number']);
+                    $server->push($fd, json_encode($data));
+                }
             }
         }
     }
