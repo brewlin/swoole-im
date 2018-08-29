@@ -87,7 +87,6 @@ class User extends Base
         $groups = GroupUser::getAllFriends($user['user']['id']);
         $friends = GroupUserMemberService::getFriends($groups);
         $server = ServerManager::getInstance()->getServer();
-
         $data = [
             'type'      => 'ws',
             'method'    => 'friendOffLine',
