@@ -39,6 +39,10 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
             $r->addRoute('GET','/user/quit','/Api/User/userQuit');
             //用户修改签名
             $r->addRoute('GET','/user/sign','/Api/User/editSignature');
+            //查找总数
+            $r->addRoute('GET','/find/total','/Api/User/findFriendTotal');
+            //查找好友或者群
+            $r->addRoute('GET','/find/friend','/Api/User/findFriend');
         });
         /**
          * 群组路由
@@ -54,6 +58,5 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
            //获取自己的消息中心
             $r->addRoute('GET','/box/info','/Api/MsgBox/getPersonalMsgBox');
         });
-
     }
 }
