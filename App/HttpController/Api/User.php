@@ -95,7 +95,7 @@ class User extends Base
         ];
         foreach ($friends as $val) {
             foreach ($val['list'] as $v){
-                if ($v['online']) {
+                if ($v['status']) {
                     $fd = UserCacheService::getFdByNum($v['number']);
                     $server->push($fd, json_encode($data));
                 }
@@ -113,6 +113,20 @@ class User extends Base
         $user = UserModel::find($this->user['id']);
         UserCacheService::saveTokenToUser($this->request()->getQueryParam('token') , $user);
         return $this->success([],'成功');
+    }
+    /**
+     * 查找好友 群
+     */
+    public function findFriend()
+    {
+
+    }
+    /**
+     * 查找好友 群 统计数量
+     */
+    public function findFriendTotal()
+    {
+
     }
 
 }
