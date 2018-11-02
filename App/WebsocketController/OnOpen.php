@@ -99,7 +99,7 @@ class OnOpen extends BaseWs
         {
             foreach ($val['list'] as $v)
             {
-                if($v['online'])
+                if($v['status'])
                 {
                     $fd = UserCacheService::getFdByNum($v['number']);
                     $server->push($fd,json_encode($data));

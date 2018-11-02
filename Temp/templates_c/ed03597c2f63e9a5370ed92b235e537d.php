@@ -1,4 +1,4 @@
-<?php /*a:5:{s:66:"/website/swoole-im/App/HttpController/Views/Admin/index/index.html";i:1531102222;s:68:"/website/swoole-im/App/HttpController/Views/Admin/public/header.html";i:1531102388;s:66:"/website/swoole-im/App/HttpController/Views/Admin/public/menu.html";i:1532144743;s:65:"/website/swoole-im/App/HttpController/Views/Admin/public/nav.html";i:1531101874;s:68:"/website/swoole-im/App/HttpController/Views/Admin/public/footer.html";i:1531101896;}*/ ?>
+<?php /*a:5:{s:66:"/website/swoole-im/App/HttpController/Views/Admin/index/index.html";i:1531102222;s:68:"/website/swoole-im/App/HttpController/Views/Admin/public/header.html";i:1531102388;s:66:"/website/swoole-im/App/HttpController/Views/Admin/public/menu.html";i:1532144744;s:65:"/website/swoole-im/App/HttpController/Views/Admin/public/nav.html";i:1531101874;s:68:"/website/swoole-im/App/HttpController/Views/Admin/public/footer.html";i:1531101896;}*/ ?>
 <!-- 引入头文件 -->
 <!DOCTYPE html>
 <html>

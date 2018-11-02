@@ -32,6 +32,23 @@ class User extends BaseValidate
         $this->rules->add('type','缺少类型')->withRule(Validate::REQUIRED);
     }
     /**
+     * 统计
+     */
+    public function total()
+    {
+        $this->rules->add('value','缺少搜索词')->withRule(Validate::REQUIRED);
+        $this->rules->add('type','缺少类型')->withRule(Validate::REQUIRED);
+    }
+    /**
+     * 查找
+     */
+    public function find()
+    {
+        $this->rules->add('value','缺少搜索词')->withRule(Validate::REQUIRED);
+        $this->rules->add('type','缺少类型')->withRule(Validate::REQUIRED);
+        $this->rules->add('page','缺少分页参数')->withRule(Validate::REQUIRED);
+    }
+    /**
      * 签名
      */
     public function sign()

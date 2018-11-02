@@ -44,8 +44,8 @@ return [
     ],
     'MYSQL'=>[
         'HOST'=>'127.0.0.1',
-        'USER'=>'root',
-        'PASSWORD'=>'roadforhacker',
+        'USER'=>'xiaodo',
+        'PASSWORD'=>'xiaodo',
         'DB_NAME'=>'talk'
     ],
 
@@ -71,9 +71,9 @@ return [
         // 数据库名
         'database'        => 'talk',
         // 用户名
-        'username'        => 'root',
+        'username'        => 'xiaodo',
         // 密码
-        'password'        => 'roadforhacker',
+        'password'        => 'xiaodo',
         // 端口
         'hostport'        => '3306',
         // 数据库表前缀

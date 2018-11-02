@@ -60,4 +60,20 @@ class User extends Model
     {
         return self::select();
     }
+    public static function searchUser($value , $page = null)
+    {
+        if($page == null)
+        {
+            return self::whereOr('number','like','%'.$value.'%')
+                        ->whereOr('nickname','like','%'.$value.'%')
+                        ->whereOr('phone','like','%'.$value.'%')
+                        ->whereOr('email','like','%'.$value.'%')
+                        ->select();
+        }
+        return self::whereOr('number','like','%'.$value.'%')
+                    ->whereOr('nickname','like','%'.$value.'%')
+                    ->whereOr('phone','like','%'.$value.'%')
+                    ->whereOr('email','like','%'.$value.'%')
+                    ->limit(16)->page($page)->select();
+    }
 }

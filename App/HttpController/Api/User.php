@@ -17,6 +17,8 @@ use App\Service\GroupUserMemberService;
 use EasySwoole\Core\Swoole\ServerManager;
 class User extends Base
 {
+    const Friend = 'friend';
+    const Group = 'group';
     /**
      * 获取群信息 或者获取好友信息
      */
@@ -117,15 +119,44 @@ class User extends Base
     /**
      * 查找好友 群
      */
-    public function findFriend()
+    public function findFriendTotal()
     {
+        (new UserValidate('total'))->goCheck($this->request());
+        $type = $this->request()->getQueryParam('type');
+        $value = $this->request()->getQueryParam('value');
 
+        if($type == self::Friend)
+        {
+            //搜索用户
+            $res = UserModel::searchUser($value);
+            return $this->success(['count' => count($res) ,'limit' => 16]);
+        }else
+        {
+            //搜索群组
+            $res = UserModel::searchUser($value);
+            return $this->success(['count' => count($res) ,'limit' => 16]);
+        }
     }
     /**
      * 查找好友 群 统计数量
      */
-    public function findFriendTotal()
+    public function findFriend()
     {
+        (new UserValidate('find'))->goCheck($this->request());
+        $type = $this->request()->getQueryParam('type');
+        $page = $this->request()->getQueryParam('page');
+        $value = $this->request()->getQueryParam('value');
+        if($type == self::Friend)
+        {
+            //搜索用户
+            $res = UserModel::searchUser($value , $page);
+            return $this->success($res);
+        }else
+        {
+            //搜索群组
+            $res = UserModel::searchUser($value , $page);
+            return $this->success($res);
+        }
 
     }
 
