@@ -50,6 +50,8 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         $routeCollector->addGroup('/api/im/team',function(RouteCollector $r){
             //退出群组
             $r->addRoute('GET' , '/group/leave','/Api/GroupMember/leaveGroup');
+            //检查用户是否可以创建群
+            $r->addRoute('GET' , '/group/check','/Api/GroupMember/checkUserCreateGroup');
         });
         /**
          * 消息路由

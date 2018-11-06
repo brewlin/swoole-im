@@ -37,4 +37,11 @@ class GroupMember extends Base
         }
         return $this->success('','退出成功');
     }
+    /**
+     * 检查用户是否可以继续创建群
+     */
+    public function checkUserCreateGroup()
+    {
+        var_dump($this->user);
+    }
 }
