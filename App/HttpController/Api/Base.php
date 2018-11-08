@@ -36,6 +36,7 @@ class Base extends Controller
             if($user)
             {
                 $this->user = $user;
+                $this->user['fd'] = UserCacheService::getFdByNum($user['number']);
                 return true;
             };
             $this->error([],'token非法');

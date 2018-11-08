@@ -15,7 +15,6 @@ class Index extends Controller
 {
     public function index()
     {
-        var_dump("sdfs");
     	$instance = Config::getInstance();
 //    	var_dump($instance->getConf('menu.'));
         // $this->response()->write('Hello easySwoole!');

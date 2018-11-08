@@ -26,4 +26,11 @@ class GroupMember extends BaseValidate
     {
         $this->rules->add('id','缺少群组id')->withRule(Validate::REQUIRED);
     }
+    public function create()
+    {
+        $this->rules->add('groupName','缺少群名称')->withRule(Validate::REQUIRED);
+        $this->rules->add('des','缺少群描述')->withRule(Validate::REQUIRED);
+        $this->rules->add('number','缺少群规模')->withRule(Validate::REQUIRED);
+        $this->rules->add('approval','缺少验证方式')->withRule(Validate::REQUIRED);
+    }
 }

@@ -52,6 +52,8 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
             $r->addRoute('GET' , '/group/leave','/Api/GroupMember/leaveGroup');
             //检查用户是否可以创建群
             $r->addRoute('GET' , '/group/check','/Api/GroupMember/checkUserCreateGroup');
+            //创建群
+            $r->addRoute('POST' , '/group/create','/Api/GroupMember/createGroup');
         });
         /**
          * 消息路由

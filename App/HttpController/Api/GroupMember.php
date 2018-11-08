@@ -7,10 +7,17 @@
  */
 
 namespace App\HttpController\Api;
+use App\Exception\Websocket\WsException;
 use App\Model\Group;
 use App\Model\GroupMember as GroupMemberModel;
 use App\Model\User;
+use App\Service\Common;
+use App\Service\GroupService;
+use App\Service\UserCacheService;
 use App\Validate\GroupMember as GroupMemberValidate;
+use EasySwoole\Core\Component\Logger;
+use EasySwoole\Core\Swoole\ServerManager;
+
 class GroupMember extends Base
 {
     public function getMembers()
@@ -42,6 +49,50 @@ class GroupMember extends Base
      */
     public function checkUserCreateGroup()
     {
-        var_dump($this->user);
+        $list = Group::getGroup(['user_number' => $this->user['number']]);
+        if(count($list) > 50)
+        {
+            return $this->error('','超过最大建群数');
+        }
+        return $this->success();
+    }
+    /**
+     * 创建群
+     */
+    public function createGroup()
+    {
+        (new GroupMemberValidate('create'))->goCheck($this->request());
+        $data = $this->request()->getParsedBody();
+        // 生成唯一群号
+        $number = Common::generate_code(8);
+        // 保存群信息，并加入群
+        $group_data = [
+            'gnumber'       => $number,
+            'user_number'   => $this->user['number'],
+            'ginfo'         => $data['des'],
+            'gname'         => $data['des'],
+            'groupname' => $data['groupName'],//群名称
+            'approval' => $data['approval'],//验证方式 需要验证 不需要验证
+            'number' => $data['number'],//群上限人数
+        ];
+        $member_data = [
+            'gnumber'       => $number,
+            'user_number'   => $this->user['number'],
+        ];
+        try{
+            Group::newGroup($group_data);
+            GroupMemberModel::newGroupMember($member_data);
+        }catch (\Exception $e){
+            Logger::getInstance()->log($e->getMessage(),'LTalk_debug');
+            $msg = (new WsException())->getMsg();
+            return $this->error(null,$msg);
+        }
+        // 创建缓存
+        UserCacheService::setGroupFds($number, $this->user['fd']);
+        $server = ServerManager::getInstance()->getServer();
+        $server->push($this->user['fd'] , json_encode(['type'=>'ws','method'=> 'newGroup','data'=> $group_data]));
+        $server->push($this->user['fd'] , json_encode(['type'=>'ws','method'=> 'ok','data'=> '创建成功']));
+        return $this->success(['groupid' => $number,'groupName' => $data['groupName']],'');
+
     }
 }
