@@ -2,7 +2,9 @@
 
 namespace EasySwoole;
 
+use App\Process\KeepUser;
 use App\Process\SendStatistics;
+use App\Sock\Event\OnWorkStart;
 use App\Sock\Parser\OnClose;
 use App\Utility\RedisPool;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
@@ -63,7 +65,7 @@ Class EasySwooleEvent implements EventInterface
     static public function mainServerCreate(ServerManager $server, EventRegister $register): void
     {
         if (version_compare(phpversion('swoole'), '2.1.0', '>=')) {
-            PoolManager::getInstance()->addPool(RedisPool::class, 3, 10);
+            PoolManager::getInstance()->addPool(RedisPool::class, 3, 20);
         }
         // 添加 onMessage 的处理方式
         EventHelper::registerDefaultOnMessage($register, "App\Sock\Parser\WebSock");
@@ -72,8 +74,12 @@ Class EasySwooleEvent implements EventInterface
         $register->add($register::onClose, function (\swoole_server $server, $fd, $reactorId ) {
             (new OnClose($fd))->close();
         });
+        $register->add($register::onWorkerStart,function(\swoole_server $server,int $workerId){
+            (new OnWorkStart())->onWorkerStart($server,$workerId);
+        });
 
         ProcessManager::getInstance()->addProcess('SendStatistics', SendStatistics::class);
+        //ProcessManager::getInstance()->addProcess('KeepUser', KeepUser::class);
     }
 
     static public function onRequest(Request $request, Response $response): void

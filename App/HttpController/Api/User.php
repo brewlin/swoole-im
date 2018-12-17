@@ -19,6 +19,7 @@ class User extends Base
 {
     const Friend = 'friend';
     const Group = 'group';
+
     /**
      * 获取群信息 或者获取好友信息
      */

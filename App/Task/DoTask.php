@@ -20,6 +20,17 @@ class DoTask
         return $server->push($fd,json_encode($res));
     }
 
+    /**
+     * @param $data
+     * 公用执行方法
+     */
+    public static function doJob($data)
+    {
+        $model = new $data['class'];
+        $method = $data['method'];
+        $model->$method($data['data']);
+
+    }
     public static function saveMysql($data){
         $model = new $data['class'];
         $method = $data['method'];
