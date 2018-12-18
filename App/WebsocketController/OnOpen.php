@@ -5,12 +5,11 @@
  * Date: 2018/4/14
  * Time: 下午5:08
  */
-
 namespace App\WebsocketController;
-
-
 use App\Exception\Websocket\TokenException;
+use App\Model\ChatRecord;
 use App\Model\GroupMember;
+use App\Service\ChatService;
 use App\Service\Common;
 use App\Service\FriendService;
 use App\Service\UserCacheService;
@@ -19,7 +18,6 @@ use EasySwoole\Core\Component\Logger;
 use EasySwoole\Core\Swoole\ServerManager;
 use App\Model\GroupUser;
 use App\Service\GroupUserMemberService;
-
 class OnOpen extends BaseWs
 {
     /*
@@ -55,17 +53,34 @@ class OnOpen extends BaseWs
         // 记录访问日志
         $this->saveAccessLog();
 
+        //检查离线消息
+        $this->checkOfflineRecord($user);
+
         $this->sendMsg(['method'=>'initok','data'=>$user['user']]);
     }
 
+    /**
+     * @param $user
+     * 检查离线消息
+     */
+    public function checkOfflineRecord($self)
+    {
+        $record = ChatRecord::getAllNoReadRecord($self['user']['id']);
+        $data['to'] = $self;
+        foreach ($record as $k => $v)
+        {
+            $user['user'] = $v['user'];
+            $data['from'] = $user;
+            $data['data'] = $v['data'];
+            ChatService::sendPersonalMsg($data);
+        }
+    }
     private function saveCache($user)
     {
         // 更新用户在线状态缓存（ 添加 fd 字段 ）
         UserCacheService::saveNumToFd($user['user']['number'], $user['fd']);
-
         // 添加 fd 与 token 关联缓存，close 时可以销毁 fd 相关缓存
         UserCacheService::saveTokenByFd($user['fd'], $user['token']);
-
         // 查找用户所在所有组，初始化组缓存
         $groups = GroupMember::getGroups(['user_number'=>$user['user']['number']]);
         if(!$groups->isEmpty())
@@ -76,7 +91,6 @@ class OnOpen extends BaseWs
             }
         }
     }
-
     /*
      * 发送上线通知
      */
@@ -86,7 +100,6 @@ class OnOpen extends BaseWs
         $groups = GroupUser::getAllFriends($user['user']['id']);
         $friends = GroupUserMemberService::getFriends($groups);
         $server = ServerManager::getInstance()->getServer();
-
         $data = [
             'type'      => 'ws',
             'method'    => 'friendOnLine',
@@ -107,7 +120,6 @@ class OnOpen extends BaseWs
             }
         }
     }
-
     /*
      * 存储访问日志
      */

@@ -97,7 +97,8 @@ class ChatService
                 'data'     => [
                     'uid'       => $data['from']['user']['id'],
                     'to_id'     => $data['to']['user']['id'],
-                    'data'      => $data['data']
+                    'data'      => $data['data'],
+                    'is_read' => $data['is_read']
                 ]
             ]
         ];

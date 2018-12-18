@@ -96,7 +96,7 @@ class BaseWs extends WebSocketController
         $fd = UserCacheService::getFdByNum($ishas['number']);
         if(!$fd){
             $data = (new FriendException([
-                'msg' => '用户暂时不在线',
+                'msg' => '用户暂时不在线,已发送离线消息',
                 'errorCode' => 40001
             ]))->getMsg();
             return $data;

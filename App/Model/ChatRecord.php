@@ -13,12 +13,23 @@ use think\Model;
 
 class ChatRecord extends Model
 {
+    public static $_instance = null;
+    public static function getInstance()
+    {
+        if(empty(self::$_instance))
+            self::$_instance = new self();
+        return self::$_instance;
+    }
     public function user(){
         return $this->belongsTo('User','uid','id');
     }
 
-    public function to_user(){
+    public function touser(){
         return $this->belongsTo('User','to_id','id');
+    }
+    public static function updateByWhere($where ,$data)
+    {
+        return self::getInstance()->where($where)->update($data);
     }
 
     public static function newRecord($data)
@@ -60,5 +71,16 @@ class ChatRecord extends Model
                       ->select(function($query){
                          $query->field(['uid' => 'id','created_time'=>'timestamp','data'=>'content']);
                       });
+    }
+    /**
+     * 查看未读聊天记录
+     */
+    public static function  getAllNoReadRecord($uid)
+    {
+        $model = new self();
+        return $model->where(['to_id' => $uid,'is_read' => 0])
+                      ->with('user')
+                      ->with('touser')
+                      ->select();
     }
 }

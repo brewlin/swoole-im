@@ -29,6 +29,13 @@ class RecordServer
             return self::getFriendRecordById($uid , $data);
         }
     }
+    /**
+     * 更新聊天记录的状态
+     */
+    public static function updateChatRecordIsRead($where,$data)
+    {
+        return ChatRecord::updateByWhere($where,$data);
+    }
 
     /**
      * 获取好友的聊天记录

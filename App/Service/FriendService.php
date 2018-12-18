@@ -80,8 +80,6 @@ class FriendService
     public static function checkIsFriend($user1_id, $user2_id){
 //        $ids = FriendModel::getAllFriends($user1_id);
         $ids = GroupUserMember::getAllFriends($user1_id);
-        var_dump($user2_id);
-        var_dump($ids);
         if(in_array($user2_id, $ids)){
             return true;
         }

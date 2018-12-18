@@ -17,6 +17,14 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         $routeCollector->get('/api/im/members','/Api/GroupMember/getMembers');
         $routeCollector->post('/api/im/image','/Api/Tool/uploadImage');
         $routeCollector->get('/api/im/record','/Api/ChatRecord/getChatRecordByToken');
+
+        /**
+         * 聊天路由
+         */
+        $routeCollector->addGroup('/api/im/chat',function(RouteCollector$r){
+
+            $r->addRoute('POST','/record/read','/Api/ChatRecord/updateIsReadChatRecord');
+        });
         /**
          * 分组路由
          */

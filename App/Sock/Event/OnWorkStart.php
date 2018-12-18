@@ -21,14 +21,10 @@ class OnWorkStart
         if($workerId == 1)
         {
             $keepuser = new KeepUser();
-            Timer::loop(10000, function ()use($keepuser) {
+            Timer::loop(20000, function () use ($keepuser) {
                 $keepuser->run();
             });
 
-        }else if($workerId >= 2)
-        {
-            echo "----------------------\n\n\n";
-            PoolManager::getInstance()->addPool(RedisPool::class, 3, 20);
         }
 
     }

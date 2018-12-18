@@ -34,9 +34,25 @@ class Chat extends BaseWs
         $user = $this->getUserInfo();
         $to_number = User::getNumberById($content['id']);
         $data = Common::security($content['data']);
-
+        /**
+         * 验证好友在线情况
+         */
         $to_user = $this->onlineValidate($content['id']);
-        if(isset($to_user['errorCode'])) {
+        // 异步发送消息的数据结构
+        $chat_data = [
+            'from'  => $user,
+            'to'    => $to_user,
+            'data'  => $data,
+            'is_read' => 1
+        ];
+        if(isset($to_user['errorCode']))
+        {
+            //不在线直接存储消息后退出
+            $chat_data['to'] = ['user' => ['id' => $content['id']]];
+            $chat_data['is_read'] = 0;
+
+            // 异步存储消息
+            ChatService::savePersonalMsg($chat_data);
             $this->response()->write(json_encode($to_user));
             return;
         }
@@ -50,12 +66,6 @@ class Chat extends BaseWs
             $this->response()->write(json_encode($err));
             return;
         }
-        // 异步发送消息
-        $chat_data = [
-            'from'  => $user,
-            'to'    => $to_user,
-            'data'  => $data
-        ];
         ChatService::sendPersonalMsg($chat_data);
 
         // 异步存储消息
