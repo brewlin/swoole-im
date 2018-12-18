@@ -19,7 +19,7 @@ SWOOLE_IM 基于websocket实时通讯平台
 
 2.架构图
 --------------
-![](http://talk.huido.site/swoole-im.png)
+![](http://im.huido.site/swoole_im.png)
 
 3.后台开发
 --------------
