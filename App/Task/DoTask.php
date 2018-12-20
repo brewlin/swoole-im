@@ -10,6 +10,7 @@ namespace App\Task;
 
 use App\Service\UserCacheService;
 use EasySwoole\Core\Swoole\ServerManager;
+use EasySwoole\Core\Swoole\Time\Timer;
 
 class DoTask
 {
@@ -18,6 +19,24 @@ class DoTask
         $res = $data['data'];
         $server = ServerManager::getInstance()->getServer();
         return $server->push($fd,json_encode($res));
+    }
+    public static function sendOfflineMsg($data)
+    {
+        $server = ServerManager::getInstance()->getServer();
+        $fd = $data['fd'];
+        $sendData = $data['data'];
+        $server->after(3000, function () use ($server,$fd,$sendData) {
+            foreach ($sendData['data'] as $res)
+            {
+                $tmp = [];
+                $tmp['type'] = $sendData['type'];
+                $tmp['method'] = $sendData['method'];
+                $tmp['data'] = $res;
+                $server->push($fd,json_encode($tmp));
+            }
+        });
+        return true;
+
     }
 
     /**

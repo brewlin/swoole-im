@@ -85,6 +85,37 @@ class ChatService
         $taskClass = new Task($taskData);
         TaskManager::async($taskClass);
     }
+
+    /**
+     * 发送离线消息
+     * @param $data
+     */
+    public static function sendOfflineMsg($fd ,$sendData)
+    {
+        $fromData = [];
+        foreach ($sendData as $data)
+        {
+            $toData = [
+                'username' => $data['from']['user']['username'],
+                'avatar' => $data['from']['user']['avatar'],
+                'id' => $data['from']['user']['id'],
+                'type' => 'friend',//聊天类型，好友聊天
+                'mine'  => false,                       // true自己的消息 ，false对方的消息
+                'fromid' => $data['from']['user']['id'],
+                'content'  => $data['data'],
+                'timestamp' => time()*1000,
+                'number'=> $data['from']['user']['number'],  // 哪来的
+            ];
+            $fromData[] = $toData;
+
+        }
+        $taskData = (new TaskHelper('sendOfflineMsg', $fd, 'chat', $fromData))
+            ->getTaskData();
+        $taskClass = new Task($taskData);
+        TaskManager::async($taskClass);
+
+
+    }
     /*
      * 存储消息记录
      */

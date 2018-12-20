@@ -66,14 +66,16 @@ class OnOpen extends BaseWs
     public function checkOfflineRecord($self)
     {
         $record = ChatRecord::getAllNoReadRecord($self['user']['id']);
+        $sendData = [];
         $data['to'] = $self;
         foreach ($record as $k => $v)
         {
             $user['user'] = $v['user'];
             $data['from'] = $user;
             $data['data'] = $v['data'];
-            ChatService::sendPersonalMsg($data);
+            $sendData[] = $data;
         }
+        ChatService::sendOfflineMsg($self['fd'],$sendData);
     }
     private function saveCache($user)
     {

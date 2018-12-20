@@ -53,7 +53,7 @@ class Chat extends BaseWs
 
             // 异步存储消息
             ChatService::savePersonalMsg($chat_data);
-            $this->response()->write(json_encode($to_user));
+            $this->response()->write(json_encode($to_user['msg']));
             return;
         }
         // 查二者是否已经是好友
