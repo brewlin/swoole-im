@@ -10,8 +10,10 @@ namespace App\Sock\Event;
 
 
 use App\Process\KeepUser;
+use App\Task\Task;
 use App\Utility\RedisPool;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
+use EasySwoole\Core\Swoole\Task\TaskManager;
 use EasySwoole\Core\Swoole\Time\Timer;
 
 class OnWorkStart

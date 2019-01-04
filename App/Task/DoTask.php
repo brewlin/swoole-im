@@ -8,7 +8,12 @@
 
 namespace App\Task;
 
+use App\Service\RedisPoolService;
 use App\Service\UserCacheService;
+use App\Service\UserService;
+use App\Utility\Redis;
+use App\Utility\RedisPool;
+use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use EasySwoole\Core\Swoole\ServerManager;
 use EasySwoole\Core\Swoole\Time\Timer;
 

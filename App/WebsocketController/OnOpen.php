@@ -41,8 +41,7 @@ class OnOpen extends BaseWs
         $userFd = UserCacheService::getFdByNum($user['user']['number']);
         if($userFd != (int)$user['fd'])
         {
-            $server = ServerManager::getInstance()->getServer();
-            $server->push($userFd , json_encode(['type'=>'ws','method'=> 'belogin','data'=> 'logout']));
+            $this->push($userFd , ['type'=>'ws','method'=> 'belogin','data'=> 'logout']);
         }
         //初始化所有相关缓存
         $this->saveCache($user);
@@ -57,6 +56,12 @@ class OnOpen extends BaseWs
         $this->checkOfflineRecord($user);
 
         $this->sendMsg(['method'=>'initok','data'=>$user['user']]);
+    }
+    public function push($fd,$data)
+    {
+        $server = ServerManager::getInstance()->getServer();
+        if($server->getClientInfo($fd))
+            $server->push($fd,json_encode($data));
     }
 
     /**
@@ -101,7 +106,6 @@ class OnOpen extends BaseWs
         // 获取分组好友
         $groups = GroupUser::getAllFriends($user['user']['id']);
         $friends = GroupUserMemberService::getFriends($groups);
-        $server = ServerManager::getInstance()->getServer();
         $data = [
             'type'      => 'ws',
             'method'    => 'friendOnLine',
@@ -117,7 +121,7 @@ class OnOpen extends BaseWs
                 if($v['status'])
                 {
                     $fd = UserCacheService::getFdByNum($v['number']);
-                    $server->push($fd,json_encode($data));
+                    $this->push($fd,$data);
                 }
             }
         }
