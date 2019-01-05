@@ -64,12 +64,16 @@ class User extends Model
     {
         if($page == null)
         {
+            if(!$value)
+                return self::select();
             return self::whereOr('number','like','%'.$value.'%')
                         ->whereOr('nickname','like','%'.$value.'%')
                         ->whereOr('phone','like','%'.$value.'%')
                         ->whereOr('email','like','%'.$value.'%')
                         ->select();
         }
+        if(!$value)
+            return self::limit(16)->page($page)->select();
         return self::whereOr('number','like','%'.$value.'%')
                     ->whereOr('nickname','like','%'.$value.'%')
                     ->whereOr('phone','like','%'.$value.'%')

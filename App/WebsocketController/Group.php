@@ -1,21 +1,28 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: yuzhang
- * Date: 2018/4/18
- * Time: 下午7:23
+ * User: xiaodo
+ * Date: 2018/10/18
  */
 
 namespace App\WebsocketController;
 
+use App\Common\Enum\MsgBoxEnum;
 use App\Exception\Websocket\GroupException;
 use App\Exception\Websocket\WsException;
+use App\Model\GroupMember;
+use App\Model\MsgBox;
+use App\Model\User;
 use App\Service\Common;
 use App\Model\Group as GroupModel;
 use App\Model\GroupMember as GroupMemberModel;
 use App\Service\GroupService;
+use App\Service\MsgBoxServer;
 use App\Service\UserCacheService;
+use App\Task\Task;
 use EasySwoole\Core\Component\Logger;
+use EasySwoole\Core\Swoole\ServerManager;
+use EasySwoole\Core\Swoole\Task\TaskManager;
 
 class Group extends BaseWs
 {
@@ -72,7 +79,7 @@ class Group extends BaseWs
             'user_number'   => $user['user']['number'],
         ];
         try{
-            GroupModel::newGroup($group_data);
+            $gid = GroupModel::newGroup($group_data);
             GroupMemberModel::newGroupMember($member_data);
         }catch (\Exception $e){
             Logger::getInstance()->log($e->getMessage(),'LTalk_debug');
@@ -87,7 +94,8 @@ class Group extends BaseWs
         $g_info = [
             'gname'  => $gname,
             'ginfo'  => $ginfo,
-            'gnumber'=> $number
+            'gnumber'=> $number,
+            'gid'     => $gid,
         ];
         GroupService::sendNewGroupInfo($g_info, $user);
     }
@@ -99,9 +107,10 @@ class Group extends BaseWs
      * 3. 写入数据库，存缓存
      * 4. 发送群组信息
      */
-    public function joinGroup(){
+    public function sendJoinGroupReq(){
         $content = $this->request()->getArg('content');
         $user = $this->getUserInfo();
+        $id = $content['id'];
         $gnumber = $content['gnumber'];
 
         //查询群组是否存在
@@ -125,33 +134,86 @@ class Group extends BaseWs
             $this->response()->write(json_encode($msg));
             return;
         }
-
-        // 写入数据库
-        $member_data = [
-            'gnumber'       => $gnumber,
-            'user_number'   => $user['user']['number'],
+        // 准备发送请求的数据
+        $data = [
+            'method'    => 'groupRequest',
+            'data'      => [
+                'from'  => $user['user']
+            ]
         ];
-        try{
-            GroupMemberModel::newGroupMember($member_data);
-        }catch (\Exception $e){
-            Logger::getInstance()->log($e->getMessage(),'LTalk_debug');
-            $msg = (new WsException())->getMsg();
-            $this->response()->write(json_encode($msg));
-            return;
-        }
+        //获取群主
+        $toUser = \App\Model\Group::getGroupOwnById($id);
+        $toId = $toUser['user']['id'];
+        //写入msgbox记录
+        $msgBox = [
+            'type' => MsgBoxEnum::AddGroup,
+            'from' => $user['user']['id'],
+            'to' => $toId,
+            'send_time' => time(),
+            'remark' => $content['remark'],
+        ];
+        $msgId = MsgBox::addMsgBox($msgBox);
+        $data['data']['from']['msg_id'] = $msgId;
+        $data['data']['from']['gnumber'] = $gnumber;
+        $data['data']['from']['gid'] = $id;
 
+        // 异步加群要求
+        $fd = UserCacheService::getFdByNum($toUser['user']['number']);
+        $taskData = [
+            'method' => 'sendMsg',
+            'data'  => [
+                'fd'        => $fd,
+                'data'      => $data
+            ]
+        ];
+        $taskClass = new Task($taskData);
+        TaskManager::async($taskClass);
+        $this->sendMsg(['data'=>'加群请求已发送！']);
+
+    }
+    /**
+     * 群主处理加群请求
+     */
+    public function doJoinGroupReq()
+    {
+        $content = $this->request()->getArg('content');
+        //申请人的信息
+        $fromUser = User::getUserById($content['from_id']);
+        $check = $content['check'];
+        $user = $this->getUserInfo();
+        $gid = $content['gid'];
+        $gnumber = $content['gnumber'];
+        $groupInfo = \App\Model\Group::getGroup(['id' => $gid],true);
+
+        // 若同意，
+            //添加群记录记录，
+            //异步通知双方，
+            //更新消息状态
+        //若不同意，在线则发消息通知
+        if($check)
+        {
+            MsgBoxServer::updateStatus($content,$user['user']['id']);
+            GroupMember::newGroupMember(['gnumber' => $gnumber,'user_number' => $fromUser['number'],'status' => 1]);
+        }else
+        {
+            //更新为拒绝
+            MsgBox::updateById($content['msg_id'] , ['type' => $content['msg_type'] ,'status' => $content['status'] ,'read_time' => time()]);
+        }
+        // 异步通知双方
+        $data  = [
+            'id'            => $gid,
+            'avatar'         => $groupInfo['avatar'],
+            'groupname'     => $groupInfo['groupname'],
+            'type'          => 'group'
+
+        ];
+        GroupService::doReq($fromUser['number'],$check,$data);
+        $server = ServerManager::getInstance()->getServer();
+        $server->push(UserCacheService::getFdByNum($fromUser['number']) , json_encode(['type'=>'ws','method'=> 'nok','data'=> '加入群-'.$groupInfo['groupname'].'-成功!']));
         // 创建缓存
         UserCacheService::setGroupFds($gnumber, $user['fd']);
 
-        // 异步通知
-        $g_info = [
-            'gname'  => $res['gname'],
-            'ginfo'  => $res['ginfo'],
-            'gnumber'=> $res['gnumber'],
-        ];
-        GroupService::sendNewGroupInfo($g_info, $user);
     }
-
     /*
      * 群组列表
      */

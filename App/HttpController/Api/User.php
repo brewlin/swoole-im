@@ -134,7 +134,7 @@ class User extends Base
         }else
         {
             //搜索群组
-            $res = UserModel::searchUser($value);
+            $res = Group::searchGroup($value);
             return $this->success(['count' => count($res) ,'limit' => 16]);
         }
     }
@@ -155,7 +155,7 @@ class User extends Base
         }else
         {
             //搜索群组
-            $res = UserModel::searchUser($value , $page);
+            $res = Group::searchGroup($value , $page);
             return $this->success($res);
         }
 

@@ -62,4 +62,9 @@ class GroupMember extends Model
         $res = self::get($id);
         return $res['gnumber'];
     }
+    public static function getIdByNumber($number)
+    {
+        $res = self::where('gnumber',$number)->find();
+        return $res['id'];
+    }
 }

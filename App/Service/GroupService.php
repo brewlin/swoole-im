@@ -21,15 +21,38 @@ class GroupService
 {
     public static function sendNewGroupInfo($g_info, $user){
         // 异步通知
-        $toData = [
-            'gname'  => $g_info['gname'],
-            'ginfo'  => $g_info['ginfo'],
-            'gnumber'=> $g_info['gnumber'],
-        ];
+        $data  = [
+            'id'            => $g_info['gid'],
+            'avatar'         => '/timg.jpg',
+            'groupname'     => $g_info['gname'],
+            'type'          => 'group'
 
-        $taskData = (new TaskHelper('sendMsg', $user['fd'], 'newGroup', $toData))
+        ];
+        $taskData = (new TaskHelper('sendMsg', $user['fd'], 'newGroup', $data))
             ->getTaskData();
         $taskClass = new Task($taskData);
         TaskManager::async($taskClass);
+    }
+
+    /**
+     * 处理加群申请
+     * @param $data
+     */
+    public static function doReq($fromNumber , $check ,$data)
+    {
+
+        $from_user = FriendService::friendInfo(['number'=>$fromNumber]);
+
+        if($from_user['online']){
+            if($check){
+                $taskData = (new TaskHelper('sendMsg', UserCacheService::getFdByNum($fromNumber), 'newGroup', $data))
+                    ->getTaskData();
+            }else{
+                $taskData = (new TaskHelper('sendMsg', UserCacheService::getFdByNum($fromNumber), 'newGroupFailMsg', '加群审核未通过'))
+                    ->getTaskData();
+            }
+            $taskClass = new Task($taskData);
+            TaskManager::async($taskClass);
+        }
     }
 }

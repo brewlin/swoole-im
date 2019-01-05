@@ -26,13 +26,22 @@ class Group extends Model
         }
 
     }
+    public function user()
+    {
+        return $this->belongsTo('User','user_number','number');
+    }
+    public static function getGroupOwnById($id,$key = null)
+    {
+        $res = self::with('user')->where('id',$id)->find();
+        if($key)
+            return $res['user'][$key];
+        return $res;
+    }
 
     public static function newGroup($data){
         $model = new self();
-        foreach ($data as $key => $val){
-            $model->$key = $val;
-        }
-        $model->save();
+        $model->save($data);
+        return $model->id;
     }
     public function username()
     {
@@ -46,6 +55,29 @@ class Group extends Model
     {
         $res = self::get($id);
         return $res['gnumber'];
+    }
+    /**
+     * 查找群
+     */
+    public static function searchGroup($value ,$page = null)
+    {
+        if($page == null)
+        {
+            if(empty($value))
+                return self::select();
+            return self::whereOr('ginfo','like','%'.$value.'%')
+                ->whereOr('gname','like','%'.$value.'%')
+                ->whereOr('gnumber','like','%'.$value.'%')
+                ->whereOr('number','like','%'.$value.'%')
+                ->select();
+        }
+        if(empty($value))
+            return self::page($page)->select();
+        return self::whereOr('ginfo','like','%'.$value.'%')
+            ->whereOr('gname','like','%'.$value.'%')
+            ->whereOr('gnumber','like','%'.$value.'%')
+            ->whereOr('number','like','%'.$value.'%')
+            ->limit(16)->page($page)->select();
     }
 
 }

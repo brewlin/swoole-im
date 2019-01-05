@@ -5,16 +5,14 @@
  * Date: 2018/4/16
  * Time: 下午9:20
  */
-
 namespace App\Service;
-
-
 use App\Model\ChatRecord;
+use App\Model\Group;
+use App\Model\GroupMember;
 use App\Task\Task;
 use App\Task\TaskHelper;
 use EasySwoole\Core\Swoole\ServerManager;
 use EasySwoole\Core\Swoole\Task\TaskManager;
-
 class ChatService
 {
 //    /*
@@ -67,7 +65,6 @@ class ChatService
 //            ->getTaskData();
 //        $taskClass = new Task($taskData);
 //        TaskManager::async($taskClass);
-
         // 给对方发
         $toData = [
             'username' => $data['from']['user']['username'],
@@ -85,7 +82,6 @@ class ChatService
         $taskClass = new Task($taskData);
         TaskManager::async($taskClass);
     }
-
     /**
      * 发送离线消息
      * @param $data
@@ -107,14 +103,11 @@ class ChatService
                 'number'=> $data['from']['user']['number'],  // 哪来的
             ];
             $fromData[] = $toData;
-
         }
         $taskData = (new TaskHelper('sendOfflineMsg', $fd, 'chat', $fromData))
             ->getTaskData();
         $taskClass = new Task($taskData);
         TaskManager::async($taskClass);
-
-
     }
     /*
      * 存储消息记录
@@ -136,45 +129,54 @@ class ChatService
         $taskClass = new Task($taskData);
         TaskManager::async($taskClass);
     }
-
     /*
      * 发送群组聊天记录
+     * {
+            username: "纸飞机" //消息来源用户名
+            ,avatar: "http://tp1.sinaimg.cn/1571889140/180/40030060651/1" //消息来源用户头像
+            ,id: "100000" //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
+            ,type: "friend" //聊天窗口来源类型，从发送消息传递的to里面获取
+            ,content: "嗨，你好！本消息系离线消息。" //消息内容
+            ,cid: 0 //消息id，可不传。除非你要对消息进行一些操作（如撤回）
+            ,mine: false //是否我发送的消息，如果为true，则会显示在右方
+            ,fromid: "100000" //消息的发送者id（比如群组中的某个消息发送者），可用于自动解决浏览器多窗口时的一些问题
+            ,timestamp: 1467475443306 //服务端时间戳毫秒数。注意：如果你返回的是标准的 unix 时间戳，记得要 *1000
+        }
      */
     public static function sendGroupMsg($data){
+        $group = Group::getGroup(['gnumber' => $data['gnumber']],true);
+        $user = $data['user']['user'];
         $res = [
             'method'    => 'groupChat',
             'type'      => 'ws',
             'data'      => [
-                'time'  => date("H:i:s", time()),
-                'groupNumber'  => $data['gnumber'],
-                'msg'   => $data['data'],
-                'user'  => $data['user']['user'],
-                'flag'  => 2
+                'username' => $user['nickname'],
+                'avatar' => $user['avatar'],
+                'id' => $group['id'],
+                'type' => 'group',
+                'content' => $data['data'],
+                'mine' => false,
+                'fromid' => $user['id'],
+                'timestamp' => time()*1000,
             ]
         ];
-        $myres = [
-            'method'    => 'groupChat',
-            'type'      => 'ws',
-            'data'      => [
-                'time'  => date("H:i:s", time()),
-                'groupNumber'  => $data['gnumber'],
-                'msg'   => $data['data'],
-                'user'  => $data['user']['user'],
-                'flag'  => 1
-            ]
-        ];
-
         $myfd = $data['user']['fd'];
-        $len = UserCacheService::getGroupFdsLen($data['gnumber']);
-        $serv = ServerManager::getInstance()->getServer();
-        for($i=0; $i<$len; $i++){
-            $fd = UserCacheService::getGroupFd($data['gnumber'], $i);
-            if($fd!=$myfd){
-                $serv->push($fd, json_encode($res));
-            }else{
-                $serv->push($fd, json_encode($myres));
-            }
-        }
+        $groupMembers  = GroupMember::getGroupMembers($data['gnumber']);
+        //待发送的fds
+        $friendFds = [];
+        foreach ($groupMembers as $v)
+            $friendFds[] = UserCacheService::getFdByNum($v);
+        //投递异步任务
+        $taskData = [
+            'method' => 'sendGroupMsg',
+            'data'  => [
+                'fd' => $myfd,
+                'res' => $res,
+                'fds' => $friendFds
+                ]
+            ];
+        $taskClass = new Task($taskData);
+        TaskManager::async($taskClass);
     }
 
     // 存储群组消息

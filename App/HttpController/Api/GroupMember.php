@@ -80,17 +80,24 @@ class GroupMember extends Base
             'user_number'   => $this->user['number'],
         ];
         try{
-            Group::newGroup($group_data);
+           $id =  Group::newGroup($group_data);
             GroupMemberModel::newGroupMember($member_data);
         }catch (\Exception $e){
             Logger::getInstance()->log($e->getMessage(),'LTalk_debug');
             $msg = (new WsException())->getMsg();
             return $this->error(null,$msg);
         }
+        $sendData  = [
+            'id'            => $id,
+            'avatar'         => '/timg.jpg',
+            'groupname'     => $data['groupName'],
+            'type'          => 'group'
+
+        ];
         // 创建缓存
         UserCacheService::setGroupFds($number, $this->user['fd']);
         $server = ServerManager::getInstance()->getServer();
-        $server->push($this->user['fd'] , json_encode(['type'=>'ws','method'=> 'newGroup','data'=> $group_data]));
+        $server->push($this->user['fd'] , json_encode(['type'=>'ws','method'=> 'newGroup','data'=> $sendData]));
         $server->push($this->user['fd'] , json_encode(['type'=>'ws','method'=> 'ok','data'=> '创建成功']));
         return $this->success(['groupid' => $number,'groupName' => $data['groupName']],'');
 

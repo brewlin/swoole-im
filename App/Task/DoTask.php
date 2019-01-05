@@ -7,16 +7,15 @@
  */
 
 namespace App\Task;
-
-use App\Service\RedisPoolService;
-use App\Service\UserCacheService;
-use App\Service\UserService;
-use App\Utility\Redis;
-use App\Utility\RedisPool;
-use EasySwoole\Core\Swoole\Coroutine\PoolManager;
-use EasySwoole\Core\Swoole\ServerManager;
-use EasySwoole\Core\Swoole\Time\Timer;
-
+    use App\Model\GroupMember;
+    use App\Service\RedisPoolService;
+    use App\Service\UserCacheService;
+    use App\Service\UserService;
+    use App\Utility\Redis;
+    use App\Utility\RedisPool;
+    use EasySwoole\Core\Swoole\Coroutine\PoolManager;
+    use EasySwoole\Core\Swoole\ServerManager;
+    use EasySwoole\Core\Swoole\Time\Timer;
 class DoTask
 {
     public static function sendMsg($data){
@@ -25,6 +24,24 @@ class DoTask
         $server = ServerManager::getInstance()->getServer();
         return $server->push($fd,json_encode($res));
     }
+    /**
+     * 发送群组聊天
+     * @param $data
+     */
+    public static function sendGroupMsg($data)
+    {
+        $fd = $data['fd'];
+        $res = $data['res'];
+        $fds = $data['fds'];
+//        $len = UserCacheService::getGroupFdsLen($data['gnumber']);
+//        $fd = UserCacheService::getGroupFd($data['gnumber'], $i);
+        $serv = ServerManager::getInstance()->getServer();
+        foreach ($fds as $v)
+            if($fd != $v)
+                $serv->push($v, json_encode($res));
+    }
+
+
     public static function sendOfflineMsg($data)
     {
         $server = ServerManager::getInstance()->getServer();
@@ -41,9 +58,7 @@ class DoTask
             }
         });
         return true;
-
     }
-
     /**
      * @param $data
      * 公用执行方法
@@ -53,14 +68,12 @@ class DoTask
         $model = new $data['class'];
         $method = $data['method'];
         $model->$method($data['data']);
-
     }
     public static function saveMysql($data){
         $model = new $data['class'];
         $method = $data['method'];
         $model::$method($data['data']);
     }
-
     public static function sendToALl($data){
         $serv = ServerManager::getInstance()->getServer();
         $start_fd = 0;
@@ -82,10 +95,7 @@ class DoTask
                         $serv->push($fd, json_encode($data));
                     }
                 }
-
             }
         }
     }
-
-
 }
