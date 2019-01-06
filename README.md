@@ -80,6 +80,8 @@ SWOOLE_IM 基于websocket实时通讯平台
 ![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210543.png?raw=true)
 - 主面板
 ![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210553.png?raw=true)
+- 右键功能（好友管理，分组管理，群管理）
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106212344.png?raw=true)
 - 整体预览图
 ![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210500.png?raw=true)
 
