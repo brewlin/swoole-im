@@ -91,7 +91,8 @@ class GroupMember extends Base
             'id'            => $id,
             'avatar'         => '/timg.jpg',
             'groupname'     => $data['groupName'],
-            'type'          => 'group'
+            'type'          => 'group',
+            'gnumber'       => $number
 
         ];
         // 创建缓存

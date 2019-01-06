@@ -87,13 +87,13 @@ class Chat extends BaseWs
         $user = $this->getUserInfo();
         $gnumber = isset($content['gnumber'])?$content['gnumber']:"";
         $data =  Common::security($content['data']);
-
         $is_in = GroupMemberModel::getGroups(['user_number'=>$user['user']['number'], 'gnumber'=>$gnumber]);
         if($is_in->isEmpty()){
-            $msg = (new GroupException([
-                'msg' => '用户不在此群中',
-                'errorCode' => 70004
-            ]))->getMsg();
+            $msg = [
+                'type'=>'ws',
+                'method'=> 'ok',
+                'data' => '用户不在此群中',
+            ];
             $this->response()->write(json_encode($msg));
             return;
         }

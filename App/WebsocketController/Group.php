@@ -116,10 +116,11 @@ class Group extends BaseWs
         //查询群组是否存在
         $res = GroupModel::getGroup(['gnumber'=>$gnumber], true);
         if(!$res){
-            $msg = (new GroupException([
-                'msg' => '群组不存在',
-                'errorCode' => 70002
-            ]))->getMsg();
+            $msg = [
+                'type'=>'ws',
+                'method'=> 'ok',
+                'data' => '群组不存在',
+            ];
             $this->response()->write(json_encode($msg));
             return;
         }
@@ -127,13 +128,15 @@ class Group extends BaseWs
         // 查询是否在群组中
         $is_in = GroupMemberModel::getGroups(['user_number'=>$user['user']['number'], 'gnumber'=>$gnumber]);
         if(!$is_in->isEmpty()){
-            $msg = (new GroupException([
-                'msg' => '您已在此群组中',
-                'errorCode' => 70003
-            ]))->getMsg();
+            $msg = [
+                'type'=>'ws',
+                'method'=> 'ok',
+                'data' => '您已在此群组中',
+            ];
             $this->response()->write(json_encode($msg));
             return;
         }
+
         // 准备发送请求的数据
         $data = [
             'method'    => 'groupRequest',
@@ -151,6 +154,7 @@ class Group extends BaseWs
             'to' => $toId,
             'send_time' => time(),
             'remark' => $content['remark'],
+            'group_user_id' => $id,
         ];
         $msgId = MsgBox::addMsgBox($msgBox);
         $data['data']['from']['msg_id'] = $msgId;
@@ -182,8 +186,8 @@ class Group extends BaseWs
         $check = $content['check'];
         $user = $this->getUserInfo();
         $gid = $content['gid'];
-        $gnumber = $content['gnumber'];
         $groupInfo = \App\Model\Group::getGroup(['id' => $gid],true);
+        $gnumber = $groupInfo['gnumber'];
 
         // 若同意，
             //添加群记录记录，
@@ -193,23 +197,35 @@ class Group extends BaseWs
         if($check)
         {
             MsgBoxServer::updateStatus($content,$user['user']['id']);
+            //判断此人是否在群里
+            if(GroupMember::getOneByWhere(['gnumber' => $gnumber,'user_number' => $fromUser['number']]))
+            {
+                $msg = [
+                    'type'=>'ws',
+                    'method'=> 'ok',
+                    'data' => '用户已在群中',
+                ];
+                $this->response()->write(json_encode($msg));
+                return;
+            }
             GroupMember::newGroupMember(['gnumber' => $gnumber,'user_number' => $fromUser['number'],'status' => 1]);
         }else
         {
             //更新为拒绝
-            MsgBox::updateById($content['msg_id'] , ['type' => $content['msg_type'] ,'status' => $content['status'] ,'read_time' => time()]);
+            MsgBox::updateById($content['msg_id'] , ['type' => $content['msg_type'] ,'status' => 4 ,'read_time' => time()]);
         }
         // 异步通知双方
         $data  = [
             'id'            => $gid,
             'avatar'         => $groupInfo['avatar'],
             'groupname'     => $groupInfo['groupname'],
+            'gnumber'       => $gnumber,
             'type'          => 'group'
 
         ];
         GroupService::doReq($fromUser['number'],$check,$data);
         $server = ServerManager::getInstance()->getServer();
-        $server->push(UserCacheService::getFdByNum($fromUser['number']) , json_encode(['type'=>'ws','method'=> 'nok','data'=> '加入群-'.$groupInfo['groupname'].'-成功!']));
+        $server->push(UserCacheService::getFdByNum($fromUser['number']) , json_encode(['type'=>'ws','method'=> 'ok','data'=> '加入群-'.$groupInfo['groupname'].'-成功!']));
         // 创建缓存
         UserCacheService::setGroupFds($gnumber, $user['fd']);
 

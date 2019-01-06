@@ -30,6 +30,10 @@ class GroupMember extends Model
     public static function getGroups($where){
         return self::where($where)->with('info')->select();
     }
+    public static function getOneByWhere($where)
+    {
+       return self::where($where)->find();
+    }
     public static function getGroupNames($where)
     {
         $res = [];

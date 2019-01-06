@@ -28,6 +28,6 @@ class Init extends Base
         $data = GroupUserMemberService::getFriends($friends);
         //获取群组信息
         $groups = GroupMember::getGroupNames(['user_number'=>$user['number'],'status' => 1]);
-        $this->success(['mine' => $user ,'friend' => $data, 'group' => $groups]);
+        $this->success(['mine' => $user ,'friend' => $data, 'group' => $groups?$groups:[]]);
     }
 }
