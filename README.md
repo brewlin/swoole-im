@@ -70,3 +70,16 @@ SWOOLE_IM 基于websocket实时通讯平台
 >
 > 带有独立的api模块
 
+7.预览
+----------
+- 消息处理中心，消息盒子
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210353.png?raw=true)
+- 发现中心，推荐好友群，搜索好友群，创建群
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210451.png?raw=true)
+- 单聊，群聊 聊天界面，聊天记录
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210543.png?raw=true)
+- 主面板
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210553.png?raw=true)
+- 整体预览图
+![](https://github.com/Lxido/swoole-im/blob/master/img/QQ%E6%88%AA%E5%9B%BE20190106210500.png?raw=true)
+
