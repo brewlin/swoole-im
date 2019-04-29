@@ -44,8 +44,8 @@ return [
     ],
     'MYSQL'=>[
         'HOST'=>'127.0.0.1',
-        'USER'=>'xiaodo',
-        'PASSWORD'=>'xiaodo',
+        'USER'=>'',
+        'PASSWORD'=>'',
         'DB_NAME'=>'talk'
     ],
 
