@@ -14,12 +14,12 @@ SWOOLE_IM 基于websocket实时通讯平台
         - ./configure --enable-async-redis
     - 修改 config配置文件 端口等信息
     - php index.php start 开启服务
-+ 项目地址 http://im.huido.site 可以注册
++ 项目地址 http://im.brewlin.com 可以注册
 
 
 2.架构图
 --------------
-![](http://im.huido.site/swoole_im.png)
+![](http://im.brewlin.com/swoole_im.png)
 
 3.后台开发
 --------------
